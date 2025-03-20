@@ -78,7 +78,7 @@ class SubjectSimilarityFinder:
         query_vec = self._vectorize([query_subject])
         
         # Search the index
-        scores, indices = self.index.search(query_vec, top_k+1)  # +1 to account for self-match
+        scores, indices = self.index.search(query_vec, top_k)
         
         # Get the results, skipping the exact match if present
         results = []
@@ -87,9 +87,8 @@ class SubjectSimilarityFinder:
             # Convert similarity score to percentage (scores are in range [-1, 1])
             similarity_percentage = (float(score) * 100)
             
-            # Skip exact matches (100% similarity or very close)
-            if subject.lower() != query_subject.lower():
-                results.append((subject, similarity_percentage))
+            # Include all matches, even exact matches
+            results.append((subject, similarity_percentage))
         
         # Return top_k results
         return results[:top_k]
